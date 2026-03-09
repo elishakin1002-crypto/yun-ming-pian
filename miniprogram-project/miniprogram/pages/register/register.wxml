@@ -1,0 +1,49 @@
+<view class="container">
+  <view class="header">
+    <text class="title">企业入驻申请</text>
+    <text class="subtitle">填写企业信息，一键生成专属商务名片</text>
+  </view>
+  
+  <form bindsubmit="onSubmit">
+    <view class="form-group">
+      <view class="label">企业LOGO</view>
+      <view class="logo-upload">
+        <image wx:if="{{logoUrl}}" src="{{logoUrl}}" class="logo-preview" mode="aspectFill"></image>
+        <view wx:else class="logo-placeholder"></view>
+        <button class="upload-btn" bindtap="uploadLogo">上传新LOGO</button>
+      </view>
+    </view>
+    
+    <view class="form-group">
+      <view class="label">企业名称</view>
+      <input name="companyName" class="input" placeholder="请输入完整企业名称" />
+    </view>
+
+    <view class="form-group">
+      <view class="label">所属行业</view>
+      <picker bindchange="onIndustryChange" value="{{industryIndex}}" range="{{industries}}">
+        <view class="picker input">
+          {{industries[industryIndex]}}
+        </view>
+      </picker>
+    </view>
+    
+    <view class="form-group">
+      <view class="label">联系人姓名</view>
+      <input name="contactName" class="input" placeholder="如：张三" />
+    </view>
+
+    <view class="form-group">
+      <view class="label">手机号码</view>
+      <input name="phone" type="number" class="input" placeholder="11位手机号" />
+    </view>
+
+    <view class="form-group">
+      <view class="label">微信号</view>
+      <input name="wechat" class="input" placeholder="请输入微信号" />
+    </view>
+    
+    <button form-type="submit" class="submit-btn" open-type="agreePrivacyAuthorization" bindagreeprivacyauthorization="handleAgreePrivacy">免费生成名片</button>
+    <view class="tips">提交即代表您同意《隐私保护政策》，我们将严格保密您的信息</view>
+  </form>
+</view>

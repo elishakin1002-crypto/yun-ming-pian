@@ -1,0 +1,15 @@
+{
+  "pages": [
+    "pages/register/register",
+    "pages/card/card"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#4f46e5",
+    "navigationBarTitleText": "汇智云联名片",
+    "navigationBarTextStyle": "white"
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "__usePrivacyCheck__": true
+}
