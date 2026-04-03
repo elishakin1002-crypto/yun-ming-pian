@@ -1,0 +1,317 @@
+.page {
+  min-height: 100vh;
+  background: #f5f5f7;
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+/* Loading */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 240rpx;
+}
+.loading-dot {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: #0066FF;
+  opacity: 0.3;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+.loading-text {
+  font-size: 28rpx;
+  color: #86868b;
+  margin-top: 24rpx;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 200rpx;
+}
+.empty-illustration {
+  margin-bottom: 40rpx;
+}
+.empty-icon-circle {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 32rpx;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+}
+.empty-icon-text {
+  font-size: 72rpx;
+  color: #c7c7cc;
+  font-weight: 200;
+}
+.empty-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 16rpx;
+}
+.empty-desc {
+  font-size: 28rpx;
+  color: #86868b;
+  text-align: center;
+  line-height: 1.6;
+  padding: 0 60rpx;
+}
+
+/* Wallet Header */
+.wallet-header {
+  padding: 16rpx 8rpx 24rpx;
+}
+.wallet-count {
+  font-size: 26rpx;
+  color: #86868b;
+}
+
+/* Wallet Card */
+.wallet-card {
+  background: #ffffff;
+  border-radius: 24rpx;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.card-main {
+  display: flex;
+  align-items: center;
+  padding: 32rpx 24rpx;
+  gap: 20rpx;
+}
+.card-main:active {
+  opacity: 0.7;
+}
+
+.card-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #f0f0f5;
+  border: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+.card-avatar-placeholder {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0066FF, #5AC8FA);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  font-size: 36rpx;
+  font-weight: 600;
+}
+
+.card-info {
+  flex: 1;
+  min-width: 0;
+}
+.card-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 6rpx;
+}
+.card-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1d1d1f;
+  flex-shrink: 0;
+}
+.card-title-badge {
+  font-size: 20rpx;
+  color: #6e6e73;
+  background: #f2f2f7;
+  padding: 4rpx 12rpx;
+  border-radius: 100rpx;
+  max-width: 180rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-company {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #3a3a3c;
+  margin-bottom: 4rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-phone {
+  display: block;
+  font-size: 24rpx;
+  color: #0066FF;
+  letter-spacing: 1rpx;
+  margin-bottom: 4rpx;
+}
+.card-industry {
+  display: block;
+  font-size: 22rpx;
+  color: #aeaeb2;
+}
+.card-arrow {
+  font-size: 36rpx;
+  color: #c7c7cc;
+  flex-shrink: 0;
+}
+
+/* Note */
+.card-note {
+  padding: 0 24rpx 20rpx;
+  margin-top: -8rpx;
+}
+.note-label {
+  font-size: 22rpx;
+  color: #aeaeb2;
+  margin-right: 12rpx;
+}
+.note-content {
+  font-size: 24rpx;
+  color: #6e6e73;
+  line-height: 1.5;
+}
+
+/* Actions */
+.card-actions {
+  display: flex;
+  border-top: 1rpx solid #f5f5f7;
+  padding: 0;
+}
+.action-chip {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 24rpx 0;
+  border-right: 1rpx solid #f5f5f7;
+  transition: background 0.15s ease;
+}
+.action-chip:last-child {
+  border-right: none;
+}
+.action-chip:active {
+  background: #f5f5f7;
+}
+.chip-text {
+  font-size: 24rpx;
+  color: #0066FF;
+  font-weight: 500;
+}
+
+/* Note Editor Sheet */
+.mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+.note-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 0 32rpx calc(32rpx + env(safe-area-inset-bottom));
+  z-index: 101;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.note-sheet.show {
+  transform: translateY(0);
+}
+.sheet-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28rpx 0;
+  border-bottom: 1rpx solid #f2f2f7;
+}
+.sheet-cancel {
+  font-size: 30rpx;
+  color: #86868b;
+}
+.sheet-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+.sheet-save {
+  font-size: 30rpx;
+  color: #0066FF;
+  font-weight: 600;
+}
+.note-textarea {
+  width: 100%;
+  min-height: 200rpx;
+  padding: 24rpx 0;
+  font-size: 30rpx;
+  color: #1d1d1f;
+  line-height: 1.6;
+  box-sizing: border-box;
+}
+
+/* Empty Action */
+.empty-action {
+  margin-top: 32rpx;
+  font-size: 28rpx;
+  color: #fff;
+  font-weight: 600;
+  padding: 20rpx 48rpx;
+  border-radius: 24rpx;
+  background: #0066FF;
+  box-shadow: 0 4rpx 16rpx rgba(0, 102, 255, 0.2);
+}
+
+/* ---- Create Guide Bar (dark style from reference) ---- */
+.create-guide-bar {
+  position: fixed;
+  left: 24rpx;
+  right: 24rpx;
+  bottom: calc(130rpx + env(safe-area-inset-bottom));
+  background: rgba(28, 28, 30, 0.95);
+  border-radius: 24rpx;
+  padding: 28rpx 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+.guide-text {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+.guide-btn {
+  font-size: 26rpx;
+  color: #fff;
+  font-weight: 600;
+  background: #0066FF;
+  padding: 12rpx 28rpx;
+  border-radius: 20rpx;
+}
+
+.tab-placeholder {
+  height: 130rpx;
+}

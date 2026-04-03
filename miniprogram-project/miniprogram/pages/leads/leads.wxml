@@ -1,0 +1,61 @@
+<view class="container">
+
+  <!-- 加载中 -->
+  <view wx:if="{{isLoading}}" class="center-tip">线索加载中...</view>
+
+  <!-- 未注册名片 -->
+  <view wx:elif="{{!hasCard}}" class="empty-state">
+    <view class="empty-icon">名片</view>
+    <view class="empty-title">注册名片后开始收集线索</view>
+    <view class="empty-desc">只要有人浏览你的名片并感兴趣，就会主动留下联系方式</view>
+    <button class="btn-primary" bindtap="goRegister">立即注册名片</button>
+  </view>
+
+  <!-- 无线索 -->
+  <view wx:elif="{{leads.length === 0}}" class="empty-state">
+    <view class="empty-icon">线索</view>
+    <view class="empty-title">暂无线索</view>
+    <view class="empty-desc">分享你的名片，感兴趣的人会主动留下联系方式</view>
+  </view>
+
+  <!-- 线索列表 -->
+  <view wx:else class="leads-wrap">
+    <view class="leads-header-row">
+      <view class="header-tip">共 {{leads.length}} 条潜在客户线索</view>
+      <button class="btn-export" bindtap="exportLeads">导出CSV</button>
+    </view>
+
+    <view
+      wx:for="{{leads}}"
+      wx:key="_id"
+      class="lead-card {{item.isRead ? '' : 'unread'}}"
+    >
+      <!-- 姓名 + 公司 + 未读标记 -->
+      <view class="lead-header">
+        <view class="lead-avatar">{{item.name ? item.name[0] : '?'}}</view>
+        <view class="lead-meta">
+          <view class="lead-name-row">
+            <text class="lead-name">{{item.name}}</text>
+            <view wx:if="{{!item.isRead}}" class="new-badge">新</view>
+          </view>
+          <text class="lead-company">{{item.company || '未填写公司'}}</text>
+        </view>
+        <text class="lead-time">{{item.timeLabel}}</text>
+      </view>
+
+      <!-- 留言 -->
+      <view wx:if="{{item.message}}" class="lead-message">{{item.message}}</view>
+
+      <!-- 操作 -->
+      <view class="lead-actions">
+        <button class="btn-act call" bindtap="callPhone" data-phone="{{item.phone}}">
+          拨号 {{item.phone}}
+        </button>
+        <button class="btn-act wechat" bindtap="copyWechat" data-wechat="{{item.wechat}}">
+          复制微信
+        </button>
+      </view>
+    </view>
+  </view>
+
+</view>

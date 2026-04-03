@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Enterprise } from '../types';
 import { Download, Filter, Eye, Save, Share2, Search } from 'lucide-react';
 
@@ -6,13 +6,22 @@ export default function AdminDashboard({ enterprises }: { enterprises: Enterpris
   const [filterIndustry, setFilterIndustry] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const industries = ['all', ...Array.from(new Set(enterprises.map(e => e.industry)))];
+  // useMemo：行业列表只在 enterprises 变化时重新计算
+  const industries = useMemo(
+    () => ['all', ...Array.from(new Set(enterprises.map(e => e.industry)))],
+    [enterprises]
+  );
 
-  const filtered = enterprises.filter(e => {
-    const matchIndustry = filterIndustry === 'all' || e.industry === filterIndustry;
-    const matchSearch = e.companyName.includes(searchTerm) || e.contactName.includes(searchTerm);
-    return matchIndustry && matchSearch;
-  });
+  // useMemo：过滤结果只在依赖项变化时重新计算；搜索改为不区分大小写
+  const filtered = useMemo(
+    () => enterprises.filter(e => {
+      const matchIndustry = filterIndustry === 'all' || e.industry === filterIndustry;
+      const term = searchTerm.toLowerCase();
+      const matchSearch = e.companyName.toLowerCase().includes(term) || e.contactName.toLowerCase().includes(term);
+      return matchIndustry && matchSearch;
+    }),
+    [enterprises, filterIndustry, searchTerm]
+  );
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">

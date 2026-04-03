@@ -1,0 +1,116 @@
+<view class="page">
+
+  <!-- Loading -->
+  <view wx:if="{{isLoading}}" class="loading-state">
+    <view class="loading-dot"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- Empty State: No Card -->
+  <view wx:elif="{{!card}}" class="empty-state">
+    <view class="empty-visual">
+      <view class="empty-card-mock">
+        <view class="mock-avatar"></view>
+        <view class="mock-lines">
+          <view class="mock-line w60"></view>
+          <view class="mock-line w40"></view>
+        </view>
+      </view>
+    </view>
+    <text class="empty-title">创建你的第一张数字名片</text>
+    <text class="empty-desc">60秒快速创建，随时分享给客户和伙伴</text>
+    <button class="btn-create-card" bindtap="goRegister">创建名片</button>
+  </view>
+
+  <!-- Has Card(s) -->
+  <view wx:else class="card-page">
+
+    <!-- Multi-card Switcher (only when ≥2 cards) -->
+    <scroll-view wx:if="{{cards.length > 1}}" scroll-x class="card-switcher">
+      <view
+        wx:for="{{cards}}"
+        wx:key="_id"
+        class="switcher-chip {{activeCardIndex === index ? 'active' : ''}}"
+        bindtap="switchCard"
+        data-index="{{index}}"
+      >
+        {{item.cardName || '名片 ' + (index + 1)}}
+      </view>
+      <view class="switcher-chip add-chip" bindtap="goCreateNew">+</view>
+    </scroll-view>
+
+    <!-- Card Preview -->
+    <view class="card-preview" bindtap="previewCard">
+      <view class="preview-theme-line theme-{{card.cardStyle || 'classic'}}"></view>
+      <view class="preview-body">
+        <image wx:if="{{card.logoUrl}}" src="{{card.logoUrl}}" class="preview-avatar" mode="aspectFill" />
+        <image wx:elif="{{card.companyLogoUrl}}" src="{{card.companyLogoUrl}}" class="preview-avatar" mode="aspectFill" />
+        <view wx:else class="preview-avatar-default">
+          <text>{{card.contactName ? card.contactName[0] : '?'}}</text>
+        </view>
+        <view class="preview-info">
+          <text class="preview-name">{{card.contactName}}</text>
+          <text class="preview-title">{{card.title || ''}}</text>
+          <text class="preview-company">{{card.companyName}}</text>
+          <text wx:if="{{card.industry}}" class="preview-industry">{{card.industry}}</text>
+        </view>
+      </view>
+      <view class="preview-footer">
+        <text class="preview-phone">{{card.phone || ''}}</text>
+        <text class="preview-tap-hint">点击预览 ›</text>
+      </view>
+    </view>
+
+    <!-- 轻量数据反馈（有数据时才显示，不占空间） -->
+    <view wx:if="{{card.views > 0 || card.saves > 0}}" class="data-hint">
+      <text wx:if="{{card.views > 0}}">{{card.views}}人浏览</text>
+      <text wx:if="{{card.views > 0 && card.saves > 0}}"> · </text>
+      <text wx:if="{{card.saves > 0}}">{{card.saves}}人收藏</text>
+    </view>
+
+    <!-- Dual Action Buttons -->
+    <view class="action-row">
+      <button class="btn-share" open-type="share">分享名片</button>
+      <view class="btn-edit" bindtap="goEdit">编辑名片</view>
+    </view>
+
+    <!-- Function Entries -->
+    <view class="entries">
+      <view class="entry-item" bindtap="goPoster">
+        <view class="entry-icon-box">
+          <view class="icon-poster"></view>
+        </view>
+        <text class="entry-title">生成海报</text>
+        <text class="entry-arrow">›</text>
+      </view>
+      <view class="entry-item" bindtap="goLeads">
+        <view class="entry-icon-box">
+          <view class="icon-leads"></view>
+        </view>
+        <text class="entry-title">我的线索</text>
+        <view wx:if="{{newLeadCount > 0}}" class="entry-badge">{{newLeadCount}}</view>
+        <text class="entry-arrow">›</text>
+      </view>
+      <view class="entry-item" bindtap="goScanCard">
+        <view class="entry-icon-box">
+          <view class="icon-scan"></view>
+        </view>
+        <text class="entry-title">纸质名片识别</text>
+        <text class="entry-arrow">›</text>
+      </view>
+      <view class="entry-item" bindtap="goSettings">
+        <view class="entry-icon-box">
+          <view class="icon-settings"></view>
+        </view>
+        <text class="entry-title">更多设置</text>
+        <text class="entry-arrow">›</text>
+      </view>
+    </view>
+
+  </view>
+
+  <view class="tab-placeholder"></view>
+
+  <!-- 隐藏的分享图 canvas -->
+  <canvas id="shareCanvas" type="2d" style="position:fixed;left:-9999px;width:500px;height:400px;"></canvas>
+</view>

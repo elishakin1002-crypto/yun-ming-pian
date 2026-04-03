@@ -1,0 +1,53 @@
+<view class="container">
+
+  <!-- Hero -->
+  <view class="hero">
+    <view class="hero-logo">🏢</view>
+    <text class="hero-title">汇智云联</text>
+    <text class="hero-sub">专注认证咨询 · 企业管理 · 数字化赋能</text>
+  </view>
+
+  <!-- 数据成就 -->
+  <view class="section">
+    <view class="section-title">我们的成就</view>
+    <view class="achv-grid">
+      <view class="achv-item" wx:for="{{achievements}}" wx:key="label">
+        <text class="achv-val">{{item.value}}</text>
+        <text class="achv-lbl">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 核心服务 -->
+  <view class="section">
+    <view class="section-title">核心服务</view>
+    <view class="service-list">
+      <view class="service-card" wx:for="{{services}}" wx:key="title">
+        <view class="svc-icon-wrap">
+          <text class="svc-icon">{{item.icon}}</text>
+        </view>
+        <view class="svc-body">
+          <text class="svc-title">{{item.title}}</text>
+          <text class="svc-desc">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 为什么选择我们 -->
+  <view class="section why-section">
+    <view class="section-title">为什么选择我们</view>
+    <view class="why-item"><text class="why-check">✅</text><text class="why-text">深耕本地市场，熟悉区域行业生态</text></view>
+    <view class="why-item"><text class="why-check">✅</text><text class="why-text">全程专家陪跑，从咨询到落地一站搞定</text></view>
+    <view class="why-item"><text class="why-check">✅</text><text class="why-text">数字化工具赋能，用技术降低管理成本</text></view>
+    <view class="why-item"><text class="why-check">✅</text><text class="why-text">服务过 3000+ 企业，案例丰富、口碑可查</text></view>
+  </view>
+
+  <!-- CTA -->
+  <view class="cta-section">
+    <button class="btn-consult" bindtap="callConsult">📞 立即咨询</button>
+    <button class="btn-register" bindtap="goRegister">🪪 免费注册我的名片</button>
+  </view>
+
+  <view class="tab-placeholder"></view>
+</view>

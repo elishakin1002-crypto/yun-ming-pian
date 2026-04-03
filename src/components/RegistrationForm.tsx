@@ -2,10 +2,16 @@ import React, { useState, useRef } from 'react';
 import { Upload, Building, User, Phone, MessageCircle, Briefcase } from 'lucide-react';
 import { Enterprise } from '../types';
 
+const PHONE_REGEX = /^1[3-9]\d{9}$/;
+const MAX_LOGO_SIZE_MB = 2;
+
 const INDUSTRIES = ['互联网/IT', '金融/投资', '教育/培训', '医疗/健康', '制造/工业', '房地产/建筑', '零售/批发', '服务业', '其他'];
 
-export default function RegistrationForm({ onRegister }: { onRegister: (data: any) => void }) {
-  const [formData, setFormData] = useState({
+type FormData = Omit<Enterprise, 'id' | 'views' | 'saves' | 'forwards' | 'createTime'>;
+
+export default function RegistrationForm({ onRegister }: { onRegister: (data: FormData) => void }) {
+  const [phoneError, setPhoneError] = useState('');
+  const [formData, setFormData] = useState<FormData>({
     companyName: '',
     industry: INDUSTRIES[0],
     contactName: '',
@@ -17,17 +23,27 @@ export default function RegistrationForm({ onRegister }: { onRegister: (data: an
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, logoUrl: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    if (file.size > MAX_LOGO_SIZE_MB * 1024 * 1024) {
+      alert(`图片大小不能超过 ${MAX_LOGO_SIZE_MB}MB`);
+      e.target.value = '';
+      return;
     }
+    const reader = new FileReader();
+    // 使用函数式更新，避免 stale closure 覆盖其他字段的最新值
+    reader.onloadend = () => {
+      setFormData(prev => ({ ...prev, logoUrl: reader.result as string }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!PHONE_REGEX.test(formData.phone)) {
+      setPhoneError('请输入正确的11位中国大陆手机号');
+      return;
+    }
+    setPhoneError('');
     onRegister(formData);
   };
 
@@ -112,15 +128,19 @@ export default function RegistrationForm({ onRegister }: { onRegister: (data: an
               <label className="block text-sm font-medium text-slate-700 mb-1">手机号码</label>
               <div className="relative">
                 <Phone className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input 
+                <input
                   required
-                  type="tel" 
+                  type="tel"
                   value={formData.phone}
-                  onChange={e => setFormData({...formData, phone: e.target.value})}
+                  onChange={e => {
+                    setFormData(prev => ({...prev, phone: e.target.value}));
+                    if (phoneError) setPhoneError('');
+                  }}
                   className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
                   placeholder="11位手机号"
                 />
               </div>
+              {phoneError && <p className="text-xs text-red-500 mt-1">{phoneError}</p>}
             </div>
 
             <div className="md:col-span-2">

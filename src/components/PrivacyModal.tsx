@@ -1,7 +1,15 @@
 import React from 'react';
 import { ShieldCheck } from 'lucide-react';
 
-export default function PrivacyModal({ onAccept }: { onAccept: () => void }) {
+export default function PrivacyModal({ onAccept, onDecline }: { onAccept: () => void; onDecline?: () => void }) {
+  const handleDecline = () => {
+    if (onDecline) {
+      onDecline();
+    } else {
+      // 无法真正关闭标签，给用户明确提示
+      alert('您已拒绝隐私协议，请关闭此页面。');
+    }
+  };
   return (
     <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
@@ -19,8 +27,8 @@ export default function PrivacyModal({ onAccept }: { onAccept: () => void }) {
           <p>我们承诺严格保护您的信息安全，绝不采集任何敏感个人信息，且不会将您的信息用于除名片展示及统计外的其他商业用途。</p>
         </div>
         <div className="flex gap-3">
-          <button 
-            onClick={() => window.location.href = 'about:blank'}
+          <button
+            onClick={handleDecline}
             className="flex-1 px-4 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors"
           >
             不同意并退出

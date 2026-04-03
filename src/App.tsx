@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import RegistrationForm from './components/RegistrationForm';
 import CardPreview from './components/CardPreview';
 import AdminDashboard from './components/AdminDashboard';
+import AboutSection from './components/AboutSection';
 import PrivacyModal from './components/PrivacyModal';
 import { Enterprise } from './types';
 import { LayoutTemplate } from 'lucide-react';
@@ -15,7 +16,7 @@ export default function App() {
   const handleRegister = (data: Omit<Enterprise, 'id' | 'views' | 'saves' | 'forwards' | 'createTime'>) => {
     const newEnterprise: Enterprise = {
       ...data,
-      id: Math.random().toString(36).substring(7),
+      id: crypto.randomUUID(),
       views: 0,
       saves: 0,
       forwards: 0,
@@ -62,7 +63,12 @@ export default function App() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-8">
-        {currentView === 'register' && <RegistrationForm onRegister={handleRegister} />}
+        {currentView === 'register' && (
+          <>
+            <AboutSection />
+            <RegistrationForm onRegister={handleRegister} />
+          </>
+        )}
         {currentView === 'card' && currentEnterprise && <CardPreview enterprise={currentEnterprise} />}
         {currentView === 'admin' && <AdminDashboard enterprises={enterprises} />}
       </main>

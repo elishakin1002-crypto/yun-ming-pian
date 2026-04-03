@@ -1,13 +1,28 @@
 {
   "pages": [
+    "pages/my-card/my-card",
+    "pages/wallet/wallet",
     "pages/register/register",
-    "pages/card/card"
+    "pages/card/card",
+    "pages/poster/poster",
+    "pages/leads/leads",
+    "pages/settings/settings"
   ],
+  "tabBar": {
+    "custom": true,
+    "color": "#86868b",
+    "selectedColor": "#0066FF",
+    "list": [
+      { "pagePath": "pages/my-card/my-card",  "text": "我的名片" },
+      { "pagePath": "pages/wallet/wallet",     "text": "客户名片" }
+    ]
+  },
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#4f46e5",
-    "navigationBarTitleText": "汇智云联名片",
-    "navigationBarTextStyle": "white"
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTitleText": "名片",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f5f5f7"
   },
   "sitemapLocation": "sitemap.json",
   "style": "v2",

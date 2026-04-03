@@ -1,49 +1,207 @@
-<view class="container">
-  <view class="header">
-    <text class="title">企业入驻申请</text>
-    <text class="subtitle">填写企业信息，一键生成专属商务名片</text>
+<view class="page">
+  <!-- Step Indicator -->
+  <view class="steps">
+    <view class="step {{step >= 1 ? 'active' : ''}}">
+      <view class="step-dot">1</view>
+      <text class="step-label">基本信息</text>
+    </view>
+    <view class="step-line {{step >= 2 ? 'active' : ''}}"></view>
+    <view class="step {{step >= 2 ? 'active' : ''}}">
+      <view class="step-dot">2</view>
+      <text class="step-label">名片风格</text>
+    </view>
+    <view class="step-line {{step >= 3 ? 'active' : ''}}"></view>
+    <view class="step {{step >= 3 ? 'active' : ''}}">
+      <view class="step-dot">3</view>
+      <text class="step-label">完善信息</text>
+    </view>
   </view>
-  
+
   <form bindsubmit="onSubmit">
-    <view class="form-group">
-      <view class="label">企业LOGO</view>
-      <view class="logo-upload">
-        <image wx:if="{{logoUrl}}" src="{{logoUrl}}" class="logo-preview" mode="aspectFill"></image>
-        <view wx:else class="logo-placeholder"></view>
-        <button class="upload-btn" bindtap="uploadLogo">上传新LOGO</button>
-      </view>
-    </view>
-    
-    <view class="form-group">
-      <view class="label">企业名称</view>
-      <input name="companyName" class="input" placeholder="请输入完整企业名称" />
-    </view>
 
-    <view class="form-group">
-      <view class="label">所属行业</view>
-      <picker bindchange="onIndustryChange" value="{{industryIndex}}" range="{{industries}}">
-        <view class="picker input">
-          {{industries[industryIndex]}}
+    <!-- ====== STEP 1: 基本信息 ====== -->
+    <view wx:if="{{step === 1}}" class="step-content">
+      <view class="step-title">{{isEdit ? '编辑名片信息' : '创建你的名片'}}</view>
+      <view class="step-desc">{{isEdit ? '修改后点击保存即可生效' : '只需几步，快速生成专属名片'}}</view>
+
+      <!-- 头像/LOGO：支持微信头像一键获取 -->
+      <button class="avatar-section-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image wx:if="{{logoUrl}}" src="{{logoUrl}}" class="avatar-img" mode="aspectFill" />
+        <view wx:else class="avatar-placeholder">
+          <text class="avatar-plus">+</text>
+          <text class="avatar-hint">点击获取微信头像</text>
         </view>
-      </picker>
-    </view>
-    
-    <view class="form-group">
-      <view class="label">联系人姓名</view>
-      <input name="contactName" class="input" placeholder="如：张三" />
+      </button>
+      <view class="avatar-alt" bindtap="uploadLogo">或手动上传图片</view>
+
+      <view class="field-group">
+        <view class="field">
+          <text class="field-label">姓名</text>
+          <input name="contactName" type="nickname" class="field-input" placeholder="点击自动填入微信昵称" value="{{formData.contactName}}" bindinput="onInput" bindchange="onNicknameChange" data-key="contactName" />
+        </view>
+        <view class="field">
+          <text class="field-label">公司 <text class="optional">选填</text></text>
+          <input name="companyName" class="field-input" placeholder="公司/组织名称" value="{{formData.companyName}}" bindinput="onInput" data-key="companyName" />
+        </view>
+        <view class="field">
+          <text class="field-label">职位</text>
+          <input name="title" class="field-input" placeholder="你的职位/头衔" value="{{formData.title}}" bindinput="onInput" data-key="title" />
+        </view>
+        <view class="field field-phone-row">
+          <view class="field-phone-left">
+            <text class="field-label">手机</text>
+            <input name="phone" type="number" class="field-input" placeholder="手机号码" value="{{formData.phone}}" bindinput="onInput" data-key="phone" />
+          </view>
+          <button wx:if="{{!formData.phone}}" class="btn-get-phone" open-type="getPhoneNumber" bindgetphonenumber="onGetPhoneNumber">一键获取</button>
+        </view>
+      </view>
+
+      <button class="btn-next" bindtap="nextStep">下一步</button>
     </view>
 
-    <view class="form-group">
-      <view class="label">手机号码</view>
-      <input name="phone" type="number" class="input" placeholder="11位手机号" />
+    <!-- ====== STEP 2: 名片风格 ====== -->
+    <view wx:if="{{step === 2}}" class="step-content">
+      <view class="step-title">选择名片风格</view>
+      <view class="step-desc">你可以随时在设置中更换</view>
+
+      <!-- 名片类型 -->
+      <view class="type-selector">
+        <view
+          class="type-option {{cardRole === 'brand' ? 'selected' : ''}}"
+          bindtap="pickRole"
+          data-role="brand"
+        >
+          <view class="type-preview brand-type-preview">
+            <view class="mini-card-line w60"></view>
+            <view class="mini-card-line w40"></view>
+            <view class="mini-card-line w80"></view>
+          </view>
+          <text class="type-name">简约名片</text>
+          <text class="type-desc">简洁大方，适合日常社交</text>
+        </view>
+        <view
+          class="type-option {{cardRole === 'growth' ? 'selected' : ''}}"
+          bindtap="pickRole"
+          data-role="growth"
+        >
+          <view class="type-preview growth-type-preview">
+            <view class="mini-card-line w60"></view>
+            <view class="mini-card-line w40"></view>
+            <view class="mini-card-line w80"></view>
+            <view class="mini-card-line w50"></view>
+          </view>
+          <text class="type-name">商务名片</text>
+          <text class="type-desc">展示实力，促进商务合作</text>
+        </view>
+      </view>
+
+      <!-- 配色方案 -->
+      <view class="color-section">
+        <text class="color-title">配色方案</text>
+        <view class="color-options">
+          <view
+            class="color-option {{cardStyle === 'classic' ? 'selected' : ''}}"
+            bindtap="pickStyle"
+            data-style="classic"
+          >
+            <view class="color-swatch swatch-classic"></view>
+            <text class="color-name">经典蓝</text>
+          </view>
+          <view
+            class="color-option {{cardStyle === 'modern' ? 'selected' : ''}}"
+            bindtap="pickStyle"
+            data-style="modern"
+          >
+            <view class="color-swatch swatch-modern"></view>
+            <text class="color-name">商务灰</text>
+          </view>
+          <view
+            class="color-option {{cardStyle === 'dark' ? 'selected' : ''}}"
+            bindtap="pickStyle"
+            data-style="dark"
+          >
+            <view class="color-swatch swatch-dark"></view>
+            <text class="color-name">暗金</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="btn-row">
+        <button class="btn-back" bindtap="prevStep">上一步</button>
+        <button wx:if="{{!isEdit}}" class="btn-next flex1" bindtap="nextStep">下一步</button>
+        <button wx:if="{{isEdit}}" class="btn-save flex1 {{isSaving ? 'disabled' : ''}}" bindtap="quickSave" disabled="{{isSaving}}">{{isSaving ? '保存中...' : '保存风格'}}</button>
+      </view>
+      <view wx:if="{{isEdit}}" class="continue-link" bindtap="nextStep">继续完善信息 ›</view>
     </view>
 
-    <view class="form-group">
-      <view class="label">微信号</view>
-      <input name="wechat" class="input" placeholder="请输入微信号" />
+    <!-- ====== STEP 3: 完善信息 ====== -->
+    <view wx:if="{{step === 3}}" class="step-content">
+      <view class="step-title">{{isEdit ? '补充信息' : '完善名片信息'}}</view>
+      <view class="step-desc">选填信息，让名片更完整</view>
+
+      <view class="field-group">
+        <view class="field">
+          <text class="field-label">微信号 <text class="optional">选填</text></text>
+          <input name="wechat" class="field-input" placeholder="方便他人添加微信" value="{{formData.wechat}}" bindinput="onInput" data-key="wechat" />
+        </view>
+        <view class="field">
+          <text class="field-label">行业</text>
+          <picker bindchange="onIndustryChange" value="{{industryIndex}}" range="{{industries}}">
+            <view class="field-input picker-display">
+              {{industries[industryIndex]}}
+              <text class="picker-arrow">›</text>
+            </view>
+          </picker>
+        </view>
+        <view class="field">
+          <text class="field-label">名片备注名 <text class="optional">选填</text></text>
+          <input name="cardName" class="field-input" placeholder="如：工作名片、副业名片" value="{{formData.cardName}}" bindinput="onInput" data-key="cardName" />
+        </view>
+      </view>
+
+      <!-- 商务名片扩展 -->
+      <block wx:if="{{cardRole === 'growth'}}">
+        <view class="section-label">商务展示信息</view>
+        <view class="field-group">
+          <view class="field">
+            <text class="field-label">个人简介 <text class="optional">选填</text></text>
+            <textarea
+              name="bio"
+              class="field-textarea"
+              placeholder="一句话介绍自己的专业领域"
+              maxlength="100"
+              value="{{formData.bio}}"
+              bindinput="onInput"
+              data-key="bio"
+            />
+          </view>
+          <view class="field">
+            <text class="field-label">核心服务 <text class="optional">选填，最多3项</text></text>
+            <input name="service1" class="field-input mb12" placeholder="服务/产品 1" value="{{formData.service1}}" bindinput="onInput" data-key="service1" />
+            <input name="service2" class="field-input mb12" placeholder="服务/产品 2" value="{{formData.service2}}" bindinput="onInput" data-key="service2" />
+            <input name="service3" class="field-input" placeholder="服务/产品 3" value="{{formData.service3}}" bindinput="onInput" data-key="service3" />
+          </view>
+          <view class="field">
+            <text class="field-label">Slogan <text class="optional">选填</text></text>
+            <input name="slogan" class="field-input" placeholder="一句话亮点/口号" value="{{formData.slogan}}" bindinput="onInput" data-key="slogan" />
+          </view>
+        </view>
+      </block>
+
+      <view class="btn-row">
+        <button class="btn-back" bindtap="prevStep">上一步</button>
+        <button
+          class="btn-create flex1 {{isSubmitting ? 'disabled' : ''}}"
+          form-type="submit"
+          disabled="{{isSubmitting}}"
+          open-type="agreePrivacyAuthorization"
+          bindagreeprivacyauthorization="handleAgreePrivacy"
+        >
+          {{isSubmitting ? (isEdit ? '保存中...' : '生成中...') : (isEdit ? '保存修改' : '生成名片')}}
+        </button>
+      </view>
+      <view class="privacy-tip">提交即代表同意《隐私保护政策》</view>
     </view>
-    
-    <button form-type="submit" class="submit-btn" open-type="agreePrivacyAuthorization" bindagreeprivacyauthorization="handleAgreePrivacy">免费生成名片</button>
-    <view class="tips">提交即代表您同意《隐私保护政策》，我们将严格保密您的信息</view>
+
   </form>
 </view>

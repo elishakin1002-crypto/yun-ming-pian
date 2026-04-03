@@ -1,0 +1,140 @@
+<view class="page">
+  <view wx:if="{{isLoading}}" class="loading-state">
+    <view class="loading-dot"></view>
+  </view>
+
+  <view wx:elif="{{!enterprise}}" class="empty-state">
+    <text class="empty-text">未找到该名片</text>
+  </view>
+
+  <!-- ====== Card Display ====== -->
+  <view wx:else class="card-container">
+
+    <!-- Card Body -->
+    <view class="card theme-{{enterprise.cardStyle || 'classic'}}">
+
+      <!-- Profile Header -->
+      <view class="profile-header">
+        <image wx:if="{{enterprise.logoUrl}}" src="{{enterprise.logoUrl}}" class="profile-avatar" mode="aspectFill" />
+        <view wx:else class="profile-avatar-default">
+          <text>{{enterprise.contactName ? enterprise.contactName[0] : '?'}}</text>
+        </view>
+        <view class="profile-details">
+          <text class="profile-name">{{enterprise.contactName}}</text>
+          <text class="profile-title">{{enterprise.title || ''}}</text>
+          <text class="profile-company">{{enterprise.companyName}}</text>
+        </view>
+      </view>
+
+      <!-- Bio (growth only) -->
+      <view wx:if="{{enterprise.cardRole === 'growth' && enterprise.bio}}" class="bio-section">
+        <text class="bio-text">{{enterprise.bio}}</text>
+      </view>
+
+      <!-- Services (growth only) -->
+      <view wx:if="{{enterprise.cardRole === 'growth' && enterprise.services && enterprise.services.length > 0}}" class="services-section">
+        <view class="service-chip" wx:for="{{enterprise.services}}" wx:key="*this">{{item}}</view>
+      </view>
+
+      <!-- Slogan (growth only) -->
+      <view wx:if="{{enterprise.cardRole === 'growth' && enterprise.slogan}}" class="slogan">
+        {{enterprise.slogan}}
+      </view>
+
+      <!-- Contact Info -->
+      <view class="contact-list">
+        <view class="contact-item" bindtap="callPhone">
+          <view class="contact-icon phone-icon"></view>
+          <view class="contact-detail">
+            <text class="contact-label">电话</text>
+            <text class="contact-value">{{enterprise.phone}}</text>
+          </view>
+        </view>
+        <view class="contact-item" bindtap="copyWechat">
+          <view class="contact-icon wechat-icon"></view>
+          <view class="contact-detail">
+            <text class="contact-label">微信</text>
+            <text class="contact-value">{{enterprise.wechat || '点击获取'}}</text>
+          </view>
+        </view>
+        <view wx:if="{{enterprise.industry}}" class="contact-item">
+          <view class="contact-icon industry-icon"></view>
+          <view class="contact-detail">
+            <text class="contact-label">行业</text>
+            <text class="contact-value">{{enterprise.industry}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Action Bar (floating bottom) -->
+    <view class="action-bar">
+
+      <!-- 名片主人预览：分享 + 编辑 -->
+      <view wx:if="{{isOwner}}" class="action-row-primary">
+        <button class="action-btn-primary owner-share-btn" open-type="share">
+          <text>分享名片</text>
+        </button>
+        <view class="action-btn-owner-edit" bindtap="goEdit">
+          <text>编辑名片</text>
+        </view>
+      </view>
+
+      <!-- 访客操作：收藏 + 拨号/分享/海报/交换 -->
+      <block wx:else>
+        <view class="action-row-primary">
+          <view class="action-btn-primary" bindtap="saveToWallet">
+            <text>{{isSaved ? '已收藏' : '收藏名片'}}</text>
+          </view>
+        </view>
+        <view class="action-row-secondary">
+          <view class="action-btn-secondary" bindtap="callPhone">
+            <text class="btn-text">拨号</text>
+          </view>
+          <button class="action-btn-secondary" open-type="share">
+            <text class="btn-text">分享</text>
+          </button>
+          <view class="action-btn-secondary" bindtap="goPoster">
+            <text class="btn-text">海报</text>
+          </view>
+          <view class="action-btn-secondary" bindtap="showLeadForm">
+            <text class="btn-text">交换名片</text>
+          </view>
+        </view>
+      </block>
+
+    </view>
+
+  </view>
+</view>
+
+<!-- ====== 交换名片面板 ====== -->
+<view wx:if="{{showExchange}}" class="mask" bindtap="hideExchange"></view>
+<view class="lead-sheet {{showExchange ? 'show' : ''}}">
+  <view class="sheet-header">
+    <text class="sheet-title">选择名片交换</text>
+    <text class="sheet-close" bindtap="hideExchange">✕</text>
+  </view>
+  <text class="sheet-desc">选择你的一张名片与{{enterprise.contactName || '对方'}}交换，双方互存名片夹</text>
+
+  <view class="exchange-card-list">
+    <view
+      class="exchange-card-item"
+      wx:for="{{myCards}}"
+      wx:key="_id"
+      bindtap="doExchange"
+      data-index="{{index}}"
+    >
+      <view class="exchange-card-avatar">
+        <text>{{item.contactName ? item.contactName[0] : '?'}}</text>
+      </view>
+      <view class="exchange-card-info">
+        <text class="exchange-card-name">{{item.cardName || item.contactName || '我的名片'}}</text>
+        <text class="exchange-card-detail">{{item.contactName}} · {{item.companyName || '未填公司'}}</text>
+      </view>
+      <text class="exchange-card-action">交换</text>
+    </view>
+  </view>
+
+  <text class="sheet-tip">交换后，你的联系方式会发送给对方，对方名片也会存入你的名片夹</text>
+</view>
