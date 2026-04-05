@@ -1,0 +1,41 @@
+<view class="page">
+  <view wx:if="{{imagePath}}" class="preview-card">
+    <image src="{{imagePath}}" class="preview-image" mode="widthFix" />
+  </view>
+
+  <view class="form-card">
+    <view class="form-title">确认后再保存</view>
+    <view class="form-desc">识别结果可以直接修改，不会自动入库。</view>
+
+    <view class="field">
+      <text class="label">姓名</text>
+      <input class="input" value="{{form.contactName}}" data-key="contactName" bindinput="onInput" placeholder="客户姓名" />
+    </view>
+    <view class="field">
+      <text class="label">手机</text>
+      <input class="input" value="{{form.phone}}" data-key="phone" bindinput="onInput" type="number" placeholder="手机号" />
+    </view>
+    <view class="field">
+      <text class="label">公司</text>
+      <input class="input" value="{{form.companyName}}" data-key="companyName" bindinput="onInput" placeholder="公司名称" />
+    </view>
+    <view class="field">
+      <text class="label">职位</text>
+      <input class="input" value="{{form.title}}" data-key="title" bindinput="onInput" placeholder="职位/职务" />
+    </view>
+    <view class="field">
+      <text class="label">微信</text>
+      <input class="input" value="{{form.wechat}}" data-key="wechat" bindinput="onInput" placeholder="微信号" />
+    </view>
+    <view class="field">
+      <text class="label">邮箱</text>
+      <input class="input" value="{{form.email}}" data-key="email" bindinput="onInput" placeholder="邮箱" />
+    </view>
+    <view class="field">
+      <text class="label">备注</text>
+      <textarea class="textarea" value="{{form.note}}" data-key="note" bindinput="onInput" placeholder="补充客户来源、需求或识别修正说明" maxlength="300" />
+    </view>
+  </view>
+
+  <button class="save-btn" bindtap="saveContact" disabled="{{saving}}">{{saving ? '保存中...' : '保存到客户名片'}}</button>
+</view>

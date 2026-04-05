@@ -9,15 +9,26 @@ const db = cloud.database()
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const openid = wxContext.OPENID
+  const query = { _openid: openid }
 
   try {
+    console.log('getMyCard request', {
+      openid,
+      query
+    })
+
     // 查询当前用户的所有名片（支持多名片）
     const cardRes = await db.collection('enterprises')
-      .where({ _openid: openid })
+      .where(query)
       .orderBy('createTime', 'desc')
       .get()
 
     if (!cardRes.data || cardRes.data.length === 0) {
+      console.log('getMyCard result', {
+        openid,
+        count: 0,
+        cardIds: []
+      })
       return { card: null, cards: [], newLeadCount: 0 }
     }
     const cards = cardRes.data
@@ -35,13 +46,23 @@ exports.main = async (event, context) => {
       console.warn('leads count error (ignored):', e && e.message)
     }
 
+    console.log('getMyCard result', {
+      openid,
+      count: cards.length,
+      cardIds: cards.map(item => item._id)
+    })
+
     return {
       card,
       cards,
       newLeadCount
     }
   } catch (e) {
-    console.error('getMyCard_error', e && e.message)
+    console.error('getMyCard_error', {
+      openid,
+      query,
+      message: e && e.message
+    })
     return { card: null, cards: [], newLeadCount: 0 }
   }
 }

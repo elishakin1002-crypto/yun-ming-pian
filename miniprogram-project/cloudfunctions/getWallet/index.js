@@ -7,7 +7,7 @@ exports.main = async (event, context) => {
   const openid = wxContext.OPENID
 
   try {
-    const res = await db.collection('cardWallet')
+    const res = await db.collection('cardwallet')
       .where({ _openid: openid })
       .orderBy('savedAt', 'desc')
       .limit(100)

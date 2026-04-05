@@ -4,6 +4,8 @@
     "pages/wallet/wallet",
     "pages/register/register",
     "pages/card/card",
+    "pages/scan-card/scan-card",
+    "pages/scan-confirm/scan-confirm",
     "pages/poster/poster",
     "pages/leads/leads",
     "pages/settings/settings"

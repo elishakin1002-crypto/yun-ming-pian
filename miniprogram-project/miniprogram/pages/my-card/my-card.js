@@ -9,18 +9,38 @@ Page({
 
   onShow() {
     this.loadMyCards()
+    const afterCreateShare = wx.getStorageSync('afterCreateShare')
+    if (afterCreateShare) {
+      wx.removeStorageSync('afterCreateShare')
+      wx.showToast({ title: '点击“发名片”立即分享', icon: 'none' })
+    }
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 })
     }
   },
 
+  resetCardState(extra = {}) {
+    this._shareImagePath = ''
+    this.setData({
+      cards: [],
+      card: null,
+      activeCardIndex: 0,
+      newLeadCount: 0,
+      ...extra
+    })
+  },
+
   loadMyCards() {
-    this.setData({ isLoading: true })
+    this.resetCardState({ isLoading: true })
     wx.cloud.callFunction({
       name: 'getMyCard',
       success: res => {
         const { cards, card, newLeadCount } = res.result || {}
         const cardList = cards || (card ? [card] : [])
+        console.log('[my-card] getMyCard result:', {
+          count: Array.isArray(cardList) ? cardList.length : 0,
+          cardIds: Array.isArray(cardList) ? cardList.map(item => this.getCardId(item)) : []
+        })
         this.setData({
           cards: cardList,
           card: cardList[this.data.activeCardIndex] || cardList[0] || null,
@@ -34,7 +54,7 @@ Page({
       },
       fail: (err) => {
         console.error('getMyCard调用失败:', err)
-        this.setData({ isLoading: false })
+        this.resetCardState({ isLoading: false })
         wx.showToast({ title: '加载失败，请检查网络', icon: 'none' })
       }
     })
@@ -46,6 +66,7 @@ Page({
       activeCardIndex: idx,
       card: this.data.cards[idx]
     })
+    setTimeout(() => this._renderShareImage(), 120)
   },
 
   goRegister() {
@@ -59,35 +80,48 @@ Page({
   goEdit() {
     const card = this.data.card
     if (!card) return
-    wx.navigateTo({ url: `/pages/register/register?edit=true&id=${card._id}` })
+    const cardId = this.getCardId(card)
+    if (!cardId) {
+      console.error('[my-card] goEdit failed: missing card id', card)
+      wx.showToast({ title: '名片数据异常，请刷新后重试', icon: 'none' })
+      return
+    }
+    wx.navigateTo({ url: `/pages/register/register?edit=true&id=${cardId}` })
   },
 
   goScanCard() {
-    wx.showToast({ title: '纸质名片识别即将上线', icon: 'none', duration: 2000 })
-  },
-
-  goSettings() {
-    wx.navigateTo({ url: '/pages/settings/settings' })
+    wx.navigateTo({ url: '/pages/scan-card/scan-card' })
   },
 
   goLeads() {
     wx.navigateTo({ url: '/pages/leads/leads' })
   },
 
+  goWallet() {
+    wx.switchTab({ url: '/pages/wallet/wallet' })
+  },
+
   goPoster() {
     const card = this.data.card
-    if (!card || !card._id) return
-    wx.navigateTo({ url: `/pages/poster/poster?id=${card._id}` })
+    const cardId = this.getCardId(card)
+    if (!cardId) return
+    wx.navigateTo({ url: `/pages/poster/poster?id=${cardId}` })
   },
 
   previewCard() {
     const card = this.data.card
-    if (!card || !card._id) return
-    wx.navigateTo({ url: `/pages/card/card?id=${card._id}` })
+    const cardId = this.getCardId(card)
+    if (!cardId) {
+      console.error('[my-card] previewCard failed: missing card id', card)
+      wx.showToast({ title: '名片数据异常，请刷新后重试', icon: 'none' })
+      return
+    }
+    wx.navigateTo({ url: `/pages/card/card?id=${encodeURIComponent(cardId)}` })
   },
 
   onShareAppMessage() {
     const card = this.data.card || {}
+    const cardId = this.getCardId(card)
     const name = card.contactName || ''
     const company = card.companyName || ''
     const role = card.title || ''
@@ -98,11 +132,29 @@ Page({
     } else {
       shareTitle = name || '查看名片'
     }
-    return {
+    if (!cardId) {
+      console.error('[my-card] share aborted: missing card id', card)
+      return {
+        title: name || '查看名片',
+        path: '/pages/my-card/my-card'
+      }
+    }
+    const sharePayload = {
       title: shareTitle,
-      path: `/pages/card/card?id=${card._id}`,
+      path: `/pages/card/card?id=${encodeURIComponent(cardId)}`,
       imageUrl: this._shareImagePath || ''
     }
+    console.log('[my-card] share payload:', {
+      cardId,
+      path: sharePayload.path,
+      title: sharePayload.title
+    })
+    return sharePayload
+  },
+
+  getCardId(card) {
+    if (!card || typeof card !== 'object') return ''
+    return card._id || card.id || ''
   },
 
   /**

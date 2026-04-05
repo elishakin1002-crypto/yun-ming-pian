@@ -7,12 +7,12 @@
   ></canvas>
 
   <!-- 加载中 -->
-  <view wx:if="{{isDrawing}}" class="center-tip">🎨 海报生成中...</view>
+  <view wx:if="{{isDrawing}}" class="center-tip">海报生成中...</view>
 
   <!-- 预览 + 操作 -->
   <view wx:elif="{{posterPath}}" class="preview-wrap">
     <image src="{{posterPath}}" class="poster-img" mode="widthFix" show-menu-by-longpress="true" />
-    <view class="hint">长按图片也可以直接保存或转发</view>
+    <view class="hint">保存到相册后，可直接发给客户或伙伴</view>
     <button class="btn-save" bindtap="saveToAlbum">保存到相册</button>
     <button class="btn-back" bindtap="goBack">返回名片</button>
   </view>

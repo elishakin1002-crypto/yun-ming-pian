@@ -8,7 +8,7 @@
     <view class="step-line {{step >= 2 ? 'active' : ''}}"></view>
     <view class="step {{step >= 2 ? 'active' : ''}}">
       <view class="step-dot">2</view>
-      <text class="step-label">名片风格</text>
+      <text class="step-label">商务风格</text>
     </view>
     <view class="step-line {{step >= 3 ? 'active' : ''}}"></view>
     <view class="step {{step >= 3 ? 'active' : ''}}">
@@ -21,8 +21,8 @@
 
     <!-- ====== STEP 1: 基本信息 ====== -->
     <view wx:if="{{step === 1}}" class="step-content">
-      <view class="step-title">{{isEdit ? '编辑名片信息' : '创建你的名片'}}</view>
-      <view class="step-desc">{{isEdit ? '修改后点击保存即可生效' : '只需几步，快速生成专属名片'}}</view>
+      <view class="step-title">{{isEdit ? '编辑名片信息' : '快速创建你的名片'}}</view>
+      <view class="step-desc">{{isEdit ? '修改后点击保存即可生效' : '先填姓名和手机号，其他信息可以稍后补充。'}}</view>
 
       <!-- 头像/LOGO：支持微信头像一键获取 -->
       <button class="avatar-section-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
@@ -61,8 +61,8 @@
 
     <!-- ====== STEP 2: 名片风格 ====== -->
     <view wx:if="{{step === 2}}" class="step-content">
-      <view class="step-title">选择名片风格</view>
-      <view class="step-desc">你可以随时在设置中更换</view>
+      <view class="step-title">选一种商务风格</view>
+      <view class="step-desc">先选一个稳重风格即可，后面还可以再调整。</view>
 
       <!-- 名片类型 -->
       <view class="type-selector">
@@ -136,8 +136,8 @@
 
     <!-- ====== STEP 3: 完善信息 ====== -->
     <view wx:if="{{step === 3}}" class="step-content">
-      <view class="step-title">{{isEdit ? '补充信息' : '完善名片信息'}}</view>
-      <view class="step-desc">选填信息，让名片更完整</view>
+      <view class="step-title">{{isEdit ? '补充信息' : '补充联系方式'}}</view>
+      <view class="step-desc">这些信息选填，用来让客户更容易联系到你。</view>
 
       <view class="field-group">
         <view class="field">
@@ -197,7 +197,7 @@
           open-type="agreePrivacyAuthorization"
           bindagreeprivacyauthorization="handleAgreePrivacy"
         >
-          {{isSubmitting ? (isEdit ? '保存中...' : '生成中...') : (isEdit ? '保存修改' : '生成名片')}}
+          {{isSubmitting ? (isEdit ? '保存中...' : '生成中...') : (isEdit ? '保存修改' : '生成并去发名片')}}
         </button>
       </view>
       <view class="privacy-tip">提交即代表同意《隐私保护政策》</view>

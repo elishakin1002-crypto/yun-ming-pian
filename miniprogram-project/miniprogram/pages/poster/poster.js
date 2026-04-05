@@ -98,27 +98,13 @@ Page({
           ctx.fillStyle = '#f0f0f2'
           ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
 
-          // ---- 顶部名片卡（高度 320px，接近真实名片比例 2.1:1）----
-          const themeColors = {
-            classic: ['#0044bb', '#0066FF'],
-            modern:  ['#3a3a3c', '#636366'],
-            dark:    ['#1a1a1c', '#2c2c2e']
-          }
-          const colors = themeColors[card.cardStyle] || themeColors.classic
+          // ---- 上半区：固定商务风，不跟主题皮肤变化 ----
           const grad = ctx.createLinearGradient(0, 40, CANVAS_W, 360)
-          grad.addColorStop(0, colors[0])
-          grad.addColorStop(1, colors[1])
+          grad.addColorStop(0, '#1f5eff')
+          grad.addColorStop(1, '#3d7bff')
           ctx.fillStyle = grad
           this.roundRect(ctx, 40, 40, CANVAS_W - 80, 320, 28)
           ctx.fill()
-
-          // dark 主题：金色描边
-          if (card.cardStyle === 'dark') {
-            ctx.strokeStyle = '#d4a853'
-            ctx.lineWidth = 3
-            this.roundRect(ctx, 40, 40, CANVAS_W - 80, 320, 28)
-            ctx.stroke()
-          }
 
           // ---- 头像：radius=70（直径 140px），在卡片内垂直居中----
           // 卡片从 y=40 到 y=360，中心 y=200；头像与卡片垂直居中
@@ -180,78 +166,38 @@ Page({
     ctx.textAlign = 'left'
     ctx.textBaseline = 'top'
 
-    // ① 姓名 — 最大，最重要，与头像垂直居中对齐
+    // ① 姓名
     ctx.fillStyle = '#ffffff'
-    ctx.font = 'bold 44px sans-serif'
+    ctx.font = 'bold 48px sans-serif'
     ctx.fillText(card.contactName || '', textX, 125)
 
-    // ② 公司名 — 第二重要，白色加粗
-    ctx.font = 'bold 26px sans-serif'
+    // ② 公司名
+    ctx.font = 'bold 28px sans-serif'
     ctx.fillStyle = 'rgba(255,255,255,0.95)'
     ctx.fillText(card.companyName || '', textX, 181)
 
-    // ③ 职位 — 辅助，弱化
-    ctx.font = '22px sans-serif'
-    ctx.fillStyle = 'rgba(255,255,255,0.75)'
-    ctx.fillText(card.title || '', textX, 219)
-
-    // ④ 行业 — 最小最弱
-    if (card.industry) {
-      ctx.font = '20px sans-serif'
-      ctx.fillStyle = 'rgba(255,255,255,0.52)'
-      ctx.fillText(card.industry, textX, 253)
+    // ③ 职位（弱化）
+    if (card.title) {
+      ctx.font = '22px sans-serif'
+      ctx.fillStyle = 'rgba(255,255,255,0.75)'
+      ctx.fillText(card.title, textX, 219)
     }
 
-    // ---- 联系信息白卡（y=390，顶部卡结束于 360，留 30px 间距）----
+    // ---- 下半区：二维码 + 一句短文案 ----
     ctx.fillStyle = '#ffffff'
-    this.roundRect(ctx, 40, 390, CANVAS_W - 80, 188, 20)
+    this.roundRect(ctx, 40, 420, CANVAS_W - 80, 560, 24)
     ctx.fill()
-
-    ctx.textBaseline = 'middle'
-
-    // 手机
-    ctx.font = '24px sans-serif'
-    ctx.fillStyle = '#86868b'
-    ctx.fillText('手机', 84, 438)
-    ctx.font = 'bold 30px sans-serif'
-    ctx.fillStyle = '#1d1d1f'
-    ctx.fillText(card.phone || '', 204, 438)
-
-    // 分隔线
-    ctx.strokeStyle = '#f2f2f7'
-    ctx.lineWidth = 1
-    ctx.beginPath()
-    ctx.moveTo(84, 468)
-    ctx.lineTo(CANVAS_W - 84, 468)
-    ctx.stroke()
-
-    // 微信
-    ctx.font = '24px sans-serif'
-    ctx.fillStyle = '#86868b'
-    ctx.fillText('微信', 84, 508)
-    ctx.font = '28px sans-serif'
-    ctx.fillStyle = '#3a3a3c'
-    ctx.fillText(card.wechat || '未填写', 204, 508)
 
     ctx.textBaseline = 'top'
 
-    // ---- Growth 名片 bio ----
-    let yOffset = 598
-    if (card.cardRole === 'growth' && card.bio) {
-      ctx.fillStyle = '#ffffff'
-      this.roundRect(ctx, 40, yOffset, CANVAS_W - 80, 110, 20)
-      ctx.fill()
-      ctx.font = '24px sans-serif'
-      ctx.fillStyle = '#6e6e73'
-      ctx.textBaseline = 'middle'
-      ctx.fillText(card.bio.substring(0, 38), 80, yOffset + 55)
-      ctx.textBaseline = 'top'
-      yOffset += 134
-    }
+    ctx.font = '26px sans-serif'
+    ctx.fillStyle = '#667085'
+    ctx.textAlign = 'center'
+    ctx.fillText('扫码查看名片，直接联系我', CANVAS_W / 2, 474)
 
     // ---- 小程序码：居中，220×220 ----
-    const QR = 220
-    const qrY = Math.max(yOffset + 20, 680)
+    const QR = 240
+    const qrY = 560
     const qrX = (CANVAS_W - QR) / 2
 
     if (codePath) {
@@ -291,10 +237,10 @@ Page({
   },
 
   drawFooter(ctx, qrY, QR, canvas, resolve) {
-    ctx.font = '22px sans-serif'
-    ctx.fillStyle = '#86868b'
+    ctx.font = '24px sans-serif'
+    ctx.fillStyle = '#667085'
     ctx.textAlign = 'center'
-    ctx.fillText('长按识别 查看名片', CANVAS_W / 2, qrY + QR + 32)
+    ctx.fillText('名片已备好，欢迎随时沟通', CANVAS_W / 2, qrY + QR + 68)
     ctx.textAlign = 'left'
 
     // 导出图片

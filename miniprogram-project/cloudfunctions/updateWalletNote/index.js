@@ -10,7 +10,7 @@ exports.main = async (event, context) => {
   if (!walletId) return { error: 'INVALID_PARAM', message: '记录ID不能为空' }
 
   try {
-    await db.collection('cardWallet').doc(walletId).update({
+    await db.collection('cardwallet').doc(walletId).update({
       data: {
         note: (note || '').trim().substring(0, 500)
       }

@@ -1,5 +1,16 @@
 const PHONE_REGEX = /^1[3-9]\d{9}$/
 
+function getCreatedCardId(result) {
+  if (!result || typeof result !== 'object') return ''
+  return result._id || result.id || result.enterpriseId || ''
+}
+
+function isCreateSuccess(result) {
+  if (!result || typeof result !== 'object') return false
+  if (result.success === true) return true
+  return !!getCreatedCardId(result)
+}
+
 Page({
   data: {
     step: 1,
@@ -291,18 +302,27 @@ Page({
         success: res => {
           wx.hideLoading()
           this.setData({ isSubmitting: false })
-          if (res.result && res.result._id) {
+          console.log('[register] registerEnterprise result:', res.result)
+          const createdCardId = getCreatedCardId(res.result)
+          if (isCreateSuccess(res.result)) {
             // 创建成功 → 引导分享（裂变关键节点）
             wx.showModal({
-              title: '名片已生成',
-              content: '立即分享给你的第一个客户或伙伴吧',
-              confirmText: '去分享',
-              cancelText: '稍后',
-              success: (r) => {
+              title: '名片已创建',
+              content: '立即发名片给客户或伙伴，开始收集客户资料。',
+              confirmText: '发名片',
+              cancelText: '稍后再说',
+              success: (result) => {
+                if (result.confirm) {
+                  wx.setStorageSync('afterCreateShare', 1)
+                }
+                if (createdCardId) {
+                  wx.setStorageSync('latestCreatedCardId', createdCardId)
+                }
                 wx.switchTab({ url: '/pages/my-card/my-card' })
               }
             })
           } else {
+            console.error('[register] create failed with result:', res.result)
             wx.showToast({ title: res.result?.message || '创建失败', icon: 'none' })
           }
         },

@@ -56,10 +56,26 @@ exports.main = async (event, context) => {
         : []
     }
 
+    console.log('registerEnterprise request', {
+      openid: wxContext.OPENID,
+      data
+    })
+
     const res = await db.collection('enterprises').add({ data })
-    return { _id: res._id }
+    console.log('registerEnterprise result', {
+      openid: wxContext.OPENID,
+      enterpriseId: res._id
+    })
+    return {
+      success: true,
+      _id: res._id,
+      message: '创建成功'
+    }
   } catch (e) {
-    console.error(e)
+    console.error('registerEnterprise error', {
+      openid: wxContext.OPENID,
+      message: e && e.message
+    })
     return { error: 'INTERNAL_ERROR', message: '服务异常' }
   }
 }

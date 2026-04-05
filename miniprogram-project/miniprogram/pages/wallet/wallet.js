@@ -4,7 +4,7 @@ Page({
     isLoading: true,
     editingNote: null,
     noteText: '',
-    hasOwnCard: true  // 默认true，避免闪烁
+    hasOwnCard: true
   },
 
   onShow() {
@@ -20,7 +20,12 @@ Page({
     wx.cloud.callFunction({
       name: 'getWallet',
       success: res => {
-        this.setData({ cards: res.result?.cards || [], isLoading: false })
+        const cards = (res.result?.cards || []).map(item => ({
+          ...item,
+          savedTimeLabel: this.formatTime(item.savedAt),
+          cardSnapshot: item.cardSnapshot || {}
+        }))
+        this.setData({ cards, isLoading: false })
       },
       fail: () => {
         this.setData({ isLoading: false })
@@ -29,22 +34,49 @@ Page({
     })
   },
 
+  formatTime(value) {
+    if (!value) return '刚刚'
+
+    const date = value instanceof Date
+      ? value
+      : value.toDate
+        ? value.toDate()
+        : value.$date
+          ? new Date(value.$date)
+          : new Date(value)
+
+    if (Number.isNaN(date.getTime())) return '刚刚'
+
+    const year = date.getFullYear()
+    const month = `${date.getMonth() + 1}`.padStart(2, '0')
+    const day = `${date.getDate()}`.padStart(2, '0')
+    const hour = `${date.getHours()}`.padStart(2, '0')
+    const minute = `${date.getMinutes()}`.padStart(2, '0')
+    return `${year}-${month}-${day} ${hour}:${minute}`
+  },
+
   viewCard(e) {
     const cardId = e.currentTarget.dataset.cardid
-    if (!cardId) return
+    if (!cardId) {
+      wx.showToast({ title: '这条资料来自手动录入', icon: 'none' })
+      return
+    }
     wx.navigateTo({ url: `/pages/card/card?id=${cardId}` })
   },
 
   callPhone(e) {
     const phone = e.currentTarget.dataset.phone
-    if (!phone) return
+    if (!phone) {
+      wx.showToast({ title: '未填写手机号', icon: 'none' })
+      return
+    }
     wx.makePhoneCall({ phoneNumber: phone })
   },
 
   copyWechat(e) {
     const wechat = e.currentTarget.dataset.wechat
     if (!wechat) {
-      wx.showToast({ title: '对方未填写微信号', icon: 'none' })
+      wx.showToast({ title: '未填写微信号', icon: 'none' })
       return
     }
     wx.setClipboardData({
@@ -53,7 +85,6 @@ Page({
     })
   },
 
-  // Note editing
   showNoteEditor(e) {
     const id = e.currentTarget.dataset.id
     const note = e.currentTarget.dataset.note || ''
@@ -85,6 +116,10 @@ Page({
 
   goCreateCard() {
     wx.navigateTo({ url: '/pages/register/register' })
+  },
+
+  goShareCard() {
+    wx.switchTab({ url: '/pages/my-card/my-card' })
   },
 
   _checkOwnCard() {

@@ -1,89 +1,81 @@
 <view class="page">
-  <!-- Loading -->
   <view wx:if="{{isLoading}}" class="loading-state">
     <view class="loading-dot"></view>
-    <text class="loading-text">加载中...</text>
+    <text class="loading-text">客户资料加载中...</text>
   </view>
 
-  <!-- Empty State -->
   <view wx:elif="{{cards.length === 0}}" class="empty-state">
-    <view class="empty-illustration">
-      <view class="empty-icon-circle">
-        <text class="empty-icon-text">+</text>
-      </view>
+    <view class="empty-panel">
+      <text class="empty-title">客户资料还没有沉淀下来</text>
+      <text class="empty-desc">你发出名片后，对方保存名片或交换联系方式，客户资料会自动收录在这里。</text>
     </view>
-    <text class="empty-title">客户名片还没有</text>
-    <text class="empty-desc">浏览客户名片时，点击"收藏名片"或互换联系方式后自动存入</text>
-    <view wx:if="{{!hasOwnCard}}" class="empty-action" bindtap="goCreateCard">
-      <text>先创建自己的名片</text>
-    </view>
+    <view wx:if="{{!hasOwnCard}}" class="empty-action" bindtap="goCreateCard">创建名片并开始沉淀</view>
+    <view wx:else class="empty-action empty-action-light" bindtap="goShareCard">去发名片收集客户资料</view>
   </view>
 
-  <!-- Card List -->
-  <view wx:else class="wallet-list">
-    <view class="wallet-header">
-      <text class="wallet-count">共 {{cards.length}} 位联系人</text>
+  <view wx:else class="content">
+    <view class="summary-card">
+      <text class="summary-title">客户资料</text>
+      <text class="summary-desc">已沉淀 {{cards.length}} 位客户联系人，按最新收录时间排序。</text>
     </view>
 
     <view
       wx:for="{{cards}}"
       wx:key="_id"
-      class="wallet-card"
+      class="client-card"
     >
-      <!-- Card Info -->
-      <view class="card-main" bindtap="viewCard" data-cardid="{{item.cardId}}">
-        <image
-          wx:if="{{item.cardSnapshot.logoUrl}}"
-          src="{{item.cardSnapshot.logoUrl}}"
-          class="card-avatar"
-          mode="aspectFill"
-        />
-        <view wx:else class="card-avatar-placeholder">
-          <text>{{item.cardSnapshot.contactName ? item.cardSnapshot.contactName[0] : '?'}}</text>
-        </view>
-        <view class="card-info">
-          <view class="card-name-row">
-            <text class="card-name">{{item.cardSnapshot.contactName}}</text>
-            <text wx:if="{{item.cardSnapshot.title}}" class="card-title-badge">{{item.cardSnapshot.title}}</text>
+      <view class="client-main" bindtap="viewCard" data-cardid="{{item.cardId}}">
+        <view class="client-head">
+          <view class="client-avatar">
+            <text>{{item.cardSnapshot.contactName ? item.cardSnapshot.contactName[0] : '?'}}</text>
           </view>
-          <text class="card-company">{{item.cardSnapshot.companyName}}</text>
-          <text class="card-phone">{{item.cardSnapshot.phone}}</text>
-          <text wx:if="{{item.cardSnapshot.industry}}" class="card-industry">{{item.cardSnapshot.industry}}</text>
+          <view class="client-info">
+            <view class="name-row">
+              <text class="client-name">{{item.cardSnapshot.contactName || '未填写姓名'}}</text>
+              <text wx:if="{{item.cardSnapshot.title}}" class="client-title">{{item.cardSnapshot.title}}</text>
+            </view>
+            <text class="client-company">{{item.cardSnapshot.companyName || '未填写公司'}}</text>
+          </view>
+          <text class="client-arrow">{{item.cardId ? '›' : ''}}</text>
         </view>
-        <text class="card-arrow">›</text>
+
+        <view class="info-grid">
+          <view class="info-item">
+            <text class="info-label">电话</text>
+            <text class="info-value">{{item.cardSnapshot.phone || '未填写'}}</text>
+          </view>
+          <view class="info-item">
+            <text class="info-label">微信</text>
+            <text class="info-value">{{item.cardSnapshot.wechat || '未填写'}}</text>
+          </view>
+        </view>
+
+        <view class="note-block">
+          <text class="note-label">备注</text>
+          <text class="note-value">{{item.note || '还没有备注，建议补充来源、需求或跟进情况。'}}</text>
+        </view>
+
+        <view class="time-row">
+          <text class="time-text">收录时间 {{item.savedTimeLabel}}</text>
+        </view>
       </view>
 
-      <!-- Note -->
-      <view wx:if="{{item.note}}" class="card-note">
-        <text class="note-label">备注</text>
-        <text class="note-content">{{item.note}}</text>
-      </view>
-
-      <!-- Quick Actions -->
-      <view class="card-actions">
-        <view class="action-chip" bindtap="callPhone" data-phone="{{item.cardSnapshot.phone}}">
-          <text class="chip-text">拨号</text>
-        </view>
-        <view class="action-chip" bindtap="copyWechat" data-wechat="{{item.cardSnapshot.wechat}}">
-          <text class="chip-text">复制微信</text>
-        </view>
-        <view class="action-chip" bindtap="showNoteEditor" data-id="{{item._id}}" data-note="{{item.note}}">
-          <text class="chip-text">{{item.note ? '编辑备注' : '添加备注'}}</text>
-        </view>
+      <view class="action-row">
+        <view class="action-btn" bindtap="callPhone" data-phone="{{item.cardSnapshot.phone}}">拨号</view>
+        <view class="action-btn" bindtap="copyWechat" data-wechat="{{item.cardSnapshot.wechat}}">复制微信</view>
+        <view class="action-btn" bindtap="showNoteEditor" data-id="{{item._id}}" data-note="{{item.note}}">编辑备注</view>
       </view>
     </view>
   </view>
 
-  <!-- 注册引导条：仅对还没有名片的用户显示 -->
   <view wx:if="{{!hasOwnCard && !isLoading}}" class="create-guide-bar" bindtap="goCreateCard">
-    <text class="guide-text">你也想拥有一张？30秒即可创建</text>
-    <text class="guide-btn">立即创建 ›</text>
+    <text class="guide-text">创建自己的名片后，交换联系方式会更顺。</text>
+    <text class="guide-btn">去创建</text>
   </view>
 
   <view class="tab-placeholder"></view>
 </view>
 
-<!-- Note Editor Modal -->
 <view wx:if="{{editingNote}}" class="mask" bindtap="cancelNote"></view>
 <view class="note-sheet {{editingNote ? 'show' : ''}}">
   <view class="sheet-bar">
@@ -93,7 +85,7 @@
   </view>
   <textarea
     class="note-textarea"
-    placeholder="记录你与对方的交流内容、跟进事项等..."
+    placeholder="记录客户需求、来源、合作进度或下次跟进时间"
     value="{{noteText}}"
     bindinput="onNoteInput"
     maxlength="500"

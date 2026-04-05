@@ -1,0 +1,26 @@
+<view class="page">
+  <view class="intro-card">
+    <text class="title">纸质名片识别</text>
+    <text class="desc">拍照后先识别，再由你确认姓名、手机、公司等信息，确认后才会保存到客户资料。</text>
+  </view>
+
+  <view class="action-card">
+    <view class="picker-btn primary" bindtap="pickFromCamera">拍照识别</view>
+    <view class="picker-btn" bindtap="pickFromAlbum">从相册选择</view>
+  </view>
+
+  <view wx:if="{{imagePath}}" class="preview-card">
+    <image src="{{imagePath}}" class="preview-image" mode="widthFix" />
+    <view class="preview-actions">
+      <view class="retry-btn" bindtap="pickFromCamera">重新拍照</view>
+      <view class="submit-btn" bindtap="recognizeCard">{{recognizing ? '识别中...' : '开始识别'}}</view>
+    </view>
+    <view wx:if="{{recognizeError}}" class="error-box">
+      <text class="error-text">{{errorMessage}}</text>
+      <view class="error-actions">
+        <view class="error-btn secondary" bindtap="retryRecognize">重新识别</view>
+        <view class="error-btn primary" bindtap="goManualEntry">手动录入</view>
+      </view>
+    </view>
+  </view>
+</view>
